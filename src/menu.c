@@ -635,7 +635,10 @@ void Menu_Tick(void)
 					
 					//movie stuff
 					menu.next_page = MenuPage_Movie;
-					movie.playing = 0;
+					movie.select = 0;
+					movie.diff = menu.page_param.stage.diff;
+					movie.id = menu.page_param.stage.id;
+					movie.story = menu.page_param.stage.story;
 				}
 				
 				//Return to main menu if circle is pressed

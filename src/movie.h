@@ -7,22 +7,27 @@
 #ifndef PSXF_GUARD_MOVIE_H
 #define PSXF_GUARD_MOVIE_H
 
-#include "stage.h"
+#include "psx.h"
+#include "pad.h"
+
+//define controller
+#define INPUT_STARTMOVIE  (PAD_CROSS | PAD_START)
 
 //Movie interface
-void Movie_Play(const char *path, u32 length);
+//void Movie_Play(const char *path, u32 length);
 
 typedef struct
 {
+  u8 select;
+  u8 playing;
   u8 id;
   u8 diff;
   boolean story;
-  u8 select;
   boolean startmovie;
+
 } Movie;
 
 extern Movie movie;
-
 void Movie_Tick();
 
 #endif

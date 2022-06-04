@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 				Stage_Tick();
 				break;
 			case GameLoop_Movie:
-			    Movie_Tick();
+			    	Movie_Tick();
 				break;
 		}
 		
