@@ -16,7 +16,8 @@ SRCS = src/main.c \
        src/psx/audio.c \
        src/psx/pad.c \
        src/psx/timer.c \
-       src/psx/movie.c \
+       src/movie.c \
+       src/strplay.c \
        src/stage/dummy.c \
        src/stage/week1.c \
        src/stage/week2.c \
@@ -47,7 +48,7 @@ LDFLAGS += -lds
 LDFLAGS += -letc
 LDFLAGS += -lgpu
 #LDFLAGS += -lgs
-#LDFLAGS += -lgte
+LDFLAGS += -lgte
 #LDFLAGS += -lgun
 #LDFLAGS += -lhmd
 #LDFLAGS += -lmath

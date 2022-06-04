@@ -100,6 +100,11 @@
 				<file name = "mighty.arc" type = "data" source = "iso/characters/mightyzip/main.arc"/>
 			</dir>
 			
+			<!-- Videos -->
+			<dir name = "videos">
+				<file name = "c1.str" type = "data" source = "iso/videos/c1.str"/>
+			</dir>
+			
 			<!-- Songs -->
 			<dir name = "songs">
 				<file name = "cuphead1.mus" type = "data" source = "iso/songs/snake-eyes/snake-eyes.mus"/>

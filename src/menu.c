@@ -16,6 +16,8 @@
 #include "archive.h"
 #include "mutil.h"
 
+#include "movie.h"
+
 #include "font.h"
 #include "trans.h"
 #include "loadscr.h"
@@ -629,6 +631,11 @@ void Menu_Tick(void)
 					menu.trans_time = FIXED_UNIT;
 					menu.page_state.title.fade = FIXED_DEC(255,1);
 					menu.page_state.title.fadespd = FIXED_DEC(510,1);
+					
+					
+					//movie stuff
+					menu.next_page = MenuPage_Movie;
+					movie.playing = 0;
 				}
 				
 				//Return to main menu if circle is pressed
@@ -1045,6 +1052,17 @@ void Menu_Tick(void)
 			LoadScr_Start();
 			Stage_Load(menu.page_param.stage.id, menu.page_param.stage.diff, menu.page_param.stage.story);
 			gameloop = GameLoop_Stage;
+			LoadScr_End();
+			break;
+		}
+		case MenuPage_Movie:
+		{
+			//Unload
+			Menu_Unload();
+
+			//Play movie
+			LoadScr_Start();
+			gameloop = GameLoop_Movie;
 			LoadScr_End();
 			break;
 		}
