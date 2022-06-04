@@ -46,7 +46,7 @@ void ErrorLock(void)
 #undef MEM_IMPLEMENTATION
 
 #ifndef PSXF_STDMEM
-static u8 malloc_heap[0x190000];
+static u8 malloc_heap[0x180000];
 #endif
 
 //Entry point
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 				Stage_Tick();
 				break;
 			case GameLoop_Movie:
-			    	Movie_Tick();
+			    Movie_Tick();
 				break;
 		}
 		

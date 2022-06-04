@@ -9,6 +9,7 @@
 #include "pad.h"
 #include "main.h"
 #include "audio.h"
+#include "menu.h"
 
 #include <sys/types.h>
 #include <libetc.h>
@@ -24,7 +25,7 @@ Movie movie;
 
 STRFILE StrFile[] = {
 	// File name	Resolution		Frame count
-	{"\\STR\\UGH.STR;1", 320, 240, 180,}
+	{"\\VIDEOS\\C1.STR;1", 320, 240, 180,}
 };
 
 void PlayMovie() {
@@ -42,7 +43,6 @@ void PlayMovie() {
 void Movie_Tick(void) 
 {
     Gfx_SetClear(0, 0, 0);
-
         switch (movie.select)
         {
             case 0:
@@ -50,10 +50,5 @@ void Movie_Tick(void)
             PlayStr(320, 240, 0, 0, &StrFile[0]);
             break;
         }
-
-    if(strPlayDone == 1) 
-    {
-    Stage_LoadScr(movie.id, movie.diff, movie.story);
-    }
 }
 
