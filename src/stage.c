@@ -111,11 +111,8 @@ static const u8 note_anims[4][3] = {
 
 //Stage definitions
 #include "character/bf.h"
-#include "character/dad.h"
 #include "character/gf.h"
 #include "character/cuphead.h"
-#include "character/tricky.h"
-#include "character/mighty.h"
 
 #include "stage/dummy.h"
 #include "stage/week1.h"

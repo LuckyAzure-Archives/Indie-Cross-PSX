@@ -82,9 +82,6 @@
 				<!-- Boyfriend assets -->
 				<file name = "bf.arc" type = "data" source = "iso/characters/bf/main.arc"/>
 				
-				<!-- Dad assets -->
-				<file name = "dad.arc" type = "data" source = "iso/characters/dad/main.arc"/>
-				
 				<!-- Girlfriend assets -->
 				<file name = "gf.arc" type = "data" source = "iso/characters/gf/main.arc"/>
 				<file name = "gftut.arc" type = "data" source = "iso/characters/gf/tut.arc"/>
@@ -92,12 +89,6 @@
 				
 				<!-- Cuphead assets -->
 				<file name = "cuphead.arc" type = "data" source = "iso/characters/cuphead/main.arc"/>
-				
-				<!-- Tricky assets -->
-				<file name = "tricky.arc" type = "data" source = "iso/characters/tricky/main.arc"/>
-				
-				<!-- Mighty assets -->
-				<file name = "mighty.arc" type = "data" source = "iso/characters/mightyzip/main.arc"/>
 			</dir>
 			
 			<!-- Videos -->
@@ -109,7 +100,6 @@
 			<dir name = "songs">
 				<file name = "cuphead1.mus" type = "data" source = "iso/songs/snake-eyes/snake-eyes.mus"/>
 				<file name = "devil.mus" type = "data" source = "iso/songs/devils-gambit/devils-gambit.mus"/>
-				<file name = "tooslow.mus" type = "data" source = "iso/songs/too-slow/too-slow.mus"/>
 			</dir>
 			
 			<!-- Music -->

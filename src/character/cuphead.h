@@ -10,6 +10,6 @@
 #include "../character.h"
 
 //Dad character functions
-Character *Char_Cuphead_New(fixed_t x, fixed_t y);
+Character *Char_cuphead_New(fixed_t x, fixed_t y);
 
 #endif
