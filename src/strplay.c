@@ -1,3 +1,12 @@
+#include "mem.h"
+#include "archive.h"
+#include "stage.h"
+#include "random.h"
+#include "main.h"
+#include "timer.h"
+#include "loadscr.h"
+#include "movie.h"
+
 /*
 	
 	Simple STR Player Library by Lameguy64 
@@ -49,18 +58,6 @@
 	
 */
 
-// Original PsyQ sample code : /psyq/addons/cd/MOVIE
-// Video to STR conversion : https://github.com/ABelliqueux/nolibgs_hello_worlds/tree/main/hello_str
-#include "movie.h"
-
-#include <sys/types.h>
-#include <libetc.h>
-#include <libgte.h>
-#include <libgpu.h>
-#include <libcd.h>
-// CODEC library
-#include <libpress.h>
-
 #define IS_RGB24	1	// 0:16-bit playback, 1:24-bit playback (recommended for quality)
 #define RING_SIZE	32	// Ring Buffer size (32 sectors seems good enough)
 
@@ -88,7 +85,7 @@ typedef struct {
 	RECT	rect[2];			// VRAM parameters on where to draw the frame data to
 	RECT	slice;				// Frame slice parameters for loading into VRAM
 	int		VlcID;				// Current VLC buffer ID
-	int ImgID;				// Current slice buffer ID
+	int		ImgID;				// Current slice buffer ID
 	int 	RectID;				// Current video buffer ID
 	int		FrameDone;			// Frame decode completion flag
 } STRENV;
@@ -110,7 +107,7 @@ int PlayStr(int xres, int yres, int xpos, int ypos, STRFILE *str);
 static void strDoPlayback(STRFILE *str);
 static void strCallback();
 static void strNextVlc(STRENV *strEnv);
-static void strSync(STRENV *strEnv);
+static void strSync(STRENV *strEnv, int mode);
 static u_long *strNext(STRENV *strEnv);
 static void strKickCD(CdlLOC *loc);
 
@@ -175,7 +172,7 @@ static void strDoPlayback(STRFILE *str) {
 	strEnv.VlcID     = 0;
 	strEnv.ImgBuff_ptr[0] = &ImgBuff[0][0];
 	strEnv.ImgBuff_ptr[1] = &ImgBuff[1][0];
-	strEnv.ImgID  = 0;
+	strEnv.ImgID     = 0;
 	
 	// Setup the display buffers on VRAM
 	strEnv.rect[0].x = strFrameX;	// First page
@@ -210,13 +207,13 @@ static void strDoPlayback(STRFILE *str) {
 		DecDCTin(strEnv.VlcBuff_ptr[strEnv.VlcID], DCT_MODE);
 		
 		// Prepare to receive the decoded image data from the MDEC
-		DecDCTout((u_long  *)strEnv.ImgBuff_ptr[strEnv.ImgID], strEnv.slice.w*strEnv.slice.h/2);
+		DecDCTout(strEnv.ImgBuff_ptr[strEnv.ImgID], strEnv.slice.w*strEnv.slice.h/2);
 		
 		// Get the next frame
 		strNextVlc(&strEnv);
 		
 		// Wait for the frame to finish decoding
-		strSync(&strEnv);
+		strSync(&strEnv, 0);
 				
 		// Switch between the display buffers per frame
 		id = strEnv.RectID? 0: 1;
@@ -232,12 +229,29 @@ static void strDoPlayback(STRFILE *str) {
 		PutDispEnv(&disp);	// Apply the video parameters
 		SetDispMask(1);		// Remove the display mask
 		
-		if(strPlayDone == 1) {
-			return;
+		if(strPlayDone == 1) 
+		{
+			//Load next song
+			Stage_Unload();
+			CdInit();
+
+            LoadScr_Start();
+			if (movie.select != 4)
+			{
+			Stage_Load((movie.select == 0) ? movie.id : stage.stage_def->next_stage, movie.diff, movie.story);
+			gameloop = GameLoop_Stage;
+			}
+			else 
+			{
+			 Menu_Load(MenuPage_Story);
+			 gameloop = GameLoop_Menu;
+			}
+			movie.select++;
+				LoadScr_End();
+			movie.startmovie = true;
+				return;
 		}
-		
-	}
-	
+}
 	// Shutdown streaming
 	DecDCToutCallback(0);
 	StUnSetRing();
@@ -256,7 +270,7 @@ static void strCallback() {
 	
 	// In 24-bit color, StCdInterrupt must be called in every callback
 	#if IS_RGB24==1
-	extern int StCdIntrFlag;
+	extern StCdIntrFlag;
 	if (StCdIntrFlag) {
 		StCdInterrupt();
 		StCdIntrFlag = 0;
@@ -276,7 +290,7 @@ static void strCallback() {
 	if (strEnv.slice.x < strEnv.rect[strEnv.RectID].x + strEnv.rect[strEnv.RectID].w) {
 	
 		// Prepare for next slice
-		DecDCTout((u_long  *)strEnv.ImgBuff_ptr[strEnv.ImgID], strEnv.slice.w*strEnv.slice.h/2);
+		DecDCTout(strEnv.ImgBuff_ptr[strEnv.ImgID], strEnv.slice.w*strEnv.slice.h/2);
 	
 	} else { // Frame has been decoded completely
 	
@@ -342,8 +356,9 @@ static u_long *strNext(STRENV *strEnv) {
 
 	// If the frame's number has reached number of frames the video has,
 	// set the strPlayDone flag.
-	if ((u_long **)sector->frameCount >= (u_long **)strNumFrames)
+	if (sector->frameCount >= strNumFrames)
 		strPlayDone = 1;
+	
 	
 	// if the resolution is differ to previous frame, clear frame buffer
 	if (strFrameWidth != sector->width || strFrameHeight != sector->height) {
@@ -366,7 +381,8 @@ static u_long *strNext(STRENV *strEnv) {
 	return(addr);
 	
 }
-static void strSync(STRENV *strEnv) {
+static void strSync(STRENV *strEnv, int mode) {
+	
 	/*
 		Waits for the frame to finish decoding.
 	*/

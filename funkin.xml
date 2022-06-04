@@ -102,7 +102,7 @@
 			
 			<!-- Videos -->
 			<dir name = "videos">
-				<file name = "c1.str" type = "data" source = "iso/videos/c1.str"/>
+				<file name = "c1.str" type = "str" source = "iso/videos/c1.str"/>
 			</dir>
 			
 			<!-- Songs -->
