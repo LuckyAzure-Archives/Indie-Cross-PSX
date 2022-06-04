@@ -10,7 +10,7 @@
 		//Song info
 		{FIXED_DEC(1,1),FIXED_DEC(1,1),FIXED_DEC(13,10)},
 		1, 1,
-		"\\SONGS\\BOPEEBO.MUS;1",
+		"\\SONGS\\CUPHEAD1.MUS;1",
 		
 		StageId_1_2, STAGE_LOAD_FLAG
 	},

@@ -4,6 +4,7 @@ all: \
 	iso/images/font/boldfont.tim \
 	iso/images/font/arial.tim \
 	iso/images/hud0.tim \
+	iso/images/hud0week1.tim \
 	iso/images/hud1.tim \
 	iso/characters/bf/main.arc \
 	iso/characters/dad/main.arc \

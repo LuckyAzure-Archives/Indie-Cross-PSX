@@ -74,7 +74,6 @@ static struct
 	u8 page, next_page;
 	boolean page_swap;
 	u8 select, next_select;
-	s16 animcounter;
 	
 	fixed_t scroll;
 	fixed_t trans_time;
@@ -90,6 +89,7 @@ static struct
 		{
 			fixed_t logo_bump;
 			fixed_t fade, fadespd;
+			s8 animcounter;
 		} title;
 		struct
 		{
@@ -151,15 +151,21 @@ static const char *Menu_LowerIf(const char *text, boolean lower)
 	return menu_text_buffer;
 }
 
-static void Menu_DrawBack(boolean flash, s32 scroll, u8 r0, u8 g0, u8 b0, u8 r1, u8 g1, u8 b1)
+static void Menu_DrawBack(s8 type)
 {
+	RECT back_dst = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 	RECT back_src = {0, 0, 255, 255};
-	RECT back_dst = {0, -scroll - SCREEN_WIDEADD2, SCREEN_WIDTH, SCREEN_WIDTH * 4 / 5};
 	
-	if (flash || (animf_count & 4) == 0)
-		Gfx_DrawTexCol(&menu.tex_back, &back_src, &back_dst, r0, g0, b0);
-	else
-		Gfx_DrawTexCol(&menu.tex_back, &back_src, &back_dst, r1, g1, b1);
+	switch (type)
+	{
+		case 0:
+			back_src.x = 254;
+			back_src.w = 1;
+			Gfx_DrawTex(&menu.tex_title, &back_src, &back_dst);
+		case 1:
+			RECT back_src = {0, 0, 255, 255};
+			Gfx_DrawTex(&menu.tex_back, &back_src, &back_dst);
+	}
 }
 
 static void Menu_DifficultySelector(s32 x, s32 y)
@@ -327,78 +333,6 @@ void Menu_Tick(void)
 	MenuPage exec_page;
 	switch (exec_page = menu.page)
 	{
-		case MenuPage_Opening:
-		{
-			u16 beat = stage.song_step >> 2;
-			
-			if (pad_state.press & PAD_TRIANGLE)
-				{
-				stage.widescreen = true;
-				stage.ghost = true;
-				stage.downscroll = true;
-				}
-			
-			//Start title screen if opening ended
-			if (beat >= 16)
-			{
-				menu.page = menu.next_page = MenuPage_Title;
-				menu.page_swap = true;
-				//Fallthrough
-			}
-			else
-			{
-				//Start title screen if start pressed
-				if (pad_state.held & PAD_START)
-					menu.page = menu.next_page = MenuPage_Title;
-				
-				//Draw different text depending on beat
-				RECT src_ng = {0, 0, 128, 128};
-				const char **funny_message = funny_messages[menu.page_state.opening.funny_message];
-				
-				switch (beat)
-				{
-					case 3:
-						menu.font_bold.draw(&menu.font_bold, "PRESENT", SCREEN_WIDTH2, SCREEN_HEIGHT2 + 32, FontAlign_Center);
-				//Fallthrough
-					case 2:
-					case 1:
-						menu.font_bold.draw(&menu.font_bold, "NINJAMUFFIN",   SCREEN_WIDTH2, SCREEN_HEIGHT2 - 32, FontAlign_Center);
-						menu.font_bold.draw(&menu.font_bold, "PHANTOMARCADE", SCREEN_WIDTH2, SCREEN_HEIGHT2 - 16, FontAlign_Center);
-						menu.font_bold.draw(&menu.font_bold, "KAWAISPRITE",   SCREEN_WIDTH2, SCREEN_HEIGHT2,      FontAlign_Center);
-						menu.font_bold.draw(&menu.font_bold, "EVILSKER",      SCREEN_WIDTH2, SCREEN_HEIGHT2 + 16, FontAlign_Center);
-						break;
-					
-					case 7:
-						menu.font_bold.draw(&menu.font_bold, "NEWGROUNDS",    SCREEN_WIDTH2, SCREEN_HEIGHT2 - 32, FontAlign_Center);
-						Gfx_BlitTex(&menu.tex_ng, &src_ng, (SCREEN_WIDTH - 128) >> 1, SCREEN_HEIGHT2 - 16);
-				//Fallthrough
-					case 6:
-					case 5:
-						menu.font_bold.draw(&menu.font_bold, "IN ASSOCIATION", SCREEN_WIDTH2, SCREEN_HEIGHT2 - 64, FontAlign_Center);
-						menu.font_bold.draw(&menu.font_bold, "WITH",           SCREEN_WIDTH2, SCREEN_HEIGHT2 - 48, FontAlign_Center);
-						break;
-					
-					case 11:
-						menu.font_bold.draw(&menu.font_bold, funny_message[1], SCREEN_WIDTH2, SCREEN_HEIGHT2, FontAlign_Center);
-				//Fallthrough
-					case 10:
-					case 9:
-						menu.font_bold.draw(&menu.font_bold, funny_message[0], SCREEN_WIDTH2, SCREEN_HEIGHT2 - 16, FontAlign_Center);
-						break;
-					
-					case 15:
-						menu.font_bold.draw(&menu.font_bold, "FUNKIN", SCREEN_WIDTH2, SCREEN_HEIGHT2 + 8, FontAlign_Center);
-				//Fallthrough
-					case 14:
-						menu.font_bold.draw(&menu.font_bold, "NIGHT", SCREEN_WIDTH2, SCREEN_HEIGHT2 - 8, FontAlign_Center);
-				//Fallthrough
-					case 13:
-						menu.font_bold.draw(&menu.font_bold, "FRIDAY", SCREEN_WIDTH2, SCREEN_HEIGHT2 - 24, FontAlign_Center);
-						break;
-				}
-				break;
-			}
-		}
 	//Fallthrough
 		case MenuPage_Title:
 		{
@@ -444,7 +378,7 @@ void Menu_Tick(void)
 				menu.page_state.title.logo_bump = (FIXED_DEC(7,1) / 24) - 1;
 			
 			static const fixed_t logo_scales[] = {
-				FIXED_DEC(1,1),
+				FIXED_DEC(100,100),
 				FIXED_DEC(101,100),
 				FIXED_DEC(102,100),
 				FIXED_DEC(103,100),
@@ -453,22 +387,30 @@ void Menu_Tick(void)
 				FIXED_DEC(97,100),
 			};
 			fixed_t logo_scale = logo_scales[(menu.page_state.title.logo_bump * 24) >> FIXED_SHIFT];
-			u32 x_rad = (logo_scale * (255 >> 1)) >> FIXED_SHIFT;
-			u32 y_rad = (logo_scale * (151 >> 1)) >> FIXED_SHIFT;
+			u32 x_rad = (logo_scale * (179 >> 1)) >> FIXED_SHIFT;
+			u32 y_rad = (logo_scale * (114 >> 1)) >> FIXED_SHIFT;
+			u32 x_rad2 = (logo_scale * (115 >> 1)) >> FIXED_SHIFT;
+			u32 y_rad2 = (logo_scale * (8 >> 1)) >> FIXED_SHIFT;
 			
-			menu.animcounter += 4;
-			if (menu.animcounter > 250)
-				menu.animcounter -= 250;
+			RECT logo2_src = {1, 115, 115, 8};
+			RECT logo2_dst = {
+				100 + (SCREEN_WIDEADD2 >> 1),
+				140,
+				x_rad2 << 1,
+				y_rad2 << 1
+			};
 			
-			RECT logo_src = {0, 0, 255, 150};
+			Gfx_DrawTexRotate(&menu.tex_title, &logo2_src, &logo2_dst, -2);
+			
+			RECT logo_src = {0, 0, 179, 114};
 			RECT logo_dst = {
-				300 - x_rad + (SCREEN_WIDEADD2 >> 1),
-				190 - y_rad,
+				100 + (SCREEN_WIDEADD2 >> 1),
+				76,
 				x_rad << 1,
 				y_rad << 1
 			};
 			
-			Gfx_DrawTexRotate(&menu.tex_title, &logo_src, &logo_dst, MUtil_Sin(menu.animcounter - 50) / 30);
+			Gfx_DrawTexRotate(&menu.tex_title, &logo_src, &logo_dst, -2);
 			
 			if (menu.page_state.title.logo_bump > 0)
 				if ((menu.page_state.title.logo_bump -= timer_dt) < 0)
@@ -483,18 +425,36 @@ void Menu_Tick(void)
 				u8 press_g = (58  + ((press_lerp * (255 - 58))  >> 8)) >> 1;
 				u8 press_b = (206 + ((press_lerp * (255 - 206)) >> 8)) >> 1;
 				
-				RECT press_src = {0, 151, 207, 18};
-				Gfx_BlitTexCol(&menu.tex_title, &press_src, (SCREEN_WIDTH - 256) / 2, SCREEN_HEIGHT - 48, press_r, press_g, press_b);
+				RECT press_src = {1, 124, 89, 30};
+				Gfx_BlitTexCol(&menu.tex_title, &press_src, 200, SCREEN_HEIGHT - 48, press_r, press_g, press_b);
 			}
 			else
 			{
 				//Flash white
-				RECT press_src = {0, (animf_count & 1) ? 151 : 169, 207, 18};
-				Gfx_BlitTex(&menu.tex_title, &press_src, (SCREEN_WIDTH - 256) / 2, SCREEN_HEIGHT - 48);
+				RECT press_src = {1, 124, 89, 30};
+				Gfx_BlitTex(&menu.tex_title, &press_src, 200, SCREEN_HEIGHT - 48);
 			}
+			
+			menu.page_state.title.animcounter += 1;
+			if (menu.page_state.title.animcounter > 50)
+				menu.page_state.title.animcounter = 0;
+			
+			RECT effect_src = {91, 124, 17, 30};
+			RECT effect_dst = {
+				272 + menu.page_state.title.animcounter,
+				SCREEN_HEIGHT - 48,
+				17,
+				30
+			};
+			
+			Gfx_BlendTex(&menu.tex_title, &effect_src, &effect_dst, 2);
 			
 			//Draw Girlfriend
 			menu.gf->tick(menu.gf);
+			
+			//Draw background
+			Menu_DrawBack(0);
+			
 			break;
 		}
 		case MenuPage_Main:
@@ -601,12 +561,7 @@ void Menu_Tick(void)
 			}
 			
 			//Draw background
-			Menu_DrawBack(
-				menu.next_page == menu.page || menu.next_page == MenuPage_Title,
-				menu.scroll >> (FIXED_SHIFT + 3),
-				253 >> 1, 231 >> 1, 113 >> 1,
-				253 >> 1, 113 >> 1, 155 >> 1
-			);
+			Menu_DrawBack(1);
 			break;
 		}
 		case MenuPage_Story:
@@ -838,14 +793,7 @@ void Menu_Tick(void)
 			menu.page_state.freeplay.back_g += (tgt_g - menu.page_state.freeplay.back_g) >> 4;
 			menu.page_state.freeplay.back_b += (tgt_b - menu.page_state.freeplay.back_b) >> 4;
 			
-			Menu_DrawBack(
-				true,
-				8,
-				menu.page_state.freeplay.back_r >> (FIXED_SHIFT + 1),
-				menu.page_state.freeplay.back_g >> (FIXED_SHIFT + 1),
-				menu.page_state.freeplay.back_b >> (FIXED_SHIFT + 1),
-				0, 0, 0
-			);
+			Menu_DrawBack(1);
 			break;
 		}
 		case MenuPage_Mods:
@@ -949,14 +897,7 @@ void Menu_Tick(void)
 			menu.page_state.freeplay.back_g += (tgt_g - menu.page_state.freeplay.back_g) >> 4;
 			menu.page_state.freeplay.back_b += (tgt_b - menu.page_state.freeplay.back_b) >> 4;
 			
-			Menu_DrawBack(
-				true,
-				8,
-				menu.page_state.freeplay.back_r >> (FIXED_SHIFT + 1),
-				menu.page_state.freeplay.back_g >> (FIXED_SHIFT + 1),
-				menu.page_state.freeplay.back_b >> (FIXED_SHIFT + 1),
-				0, 0, 0
-			);
+			Menu_DrawBack(1);
 			break;
 		}
 		case MenuPage_Options:
@@ -994,7 +935,13 @@ void Menu_Tick(void)
 			
 			//Initialize page
 			if (menu.page_swap)
+			{
 				menu.scroll = COUNT_OF(menu_options) * FIXED_DEC(24 + SCREEN_HEIGHT2,1);
+				Audio_LoadMus("\\MUSIC\\OPTIONS.MUS;1");
+				Audio_PlayMus(true);
+				Audio_SetVolume(0, 0x3FFF, 0x0000);
+				Audio_SetVolume(1, 0x0000, 0x3FFF);
+			}
 			
 			//Draw page label
 			menu.font_bold.draw(&menu.font_bold,
@@ -1046,6 +993,10 @@ void Menu_Tick(void)
 					menu.next_page = MenuPage_Main;
 					menu.next_select = 3; //Options
 					Trans_Start();
+					Audio_LoadMus("\\MUSIC\\MENU.MUS;1");
+					Audio_PlayMus(true);
+					Audio_SetVolume(0, 0x3FFF, 0x0000);
+					Audio_SetVolume(1, 0x0000, 0x3FFF);
 				}
 			}
 			
@@ -1082,12 +1033,7 @@ void Menu_Tick(void)
 			}
 			
 			//Draw background
-			Menu_DrawBack(
-				true,
-				8,
-				253 >> 1, 113 >> 1, 155 >> 1,
-				0, 0, 0
-			);
+			Menu_DrawBack(1);
 			break;
 		}
 		case MenuPage_Stage:

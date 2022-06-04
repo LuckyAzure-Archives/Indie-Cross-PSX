@@ -1270,8 +1270,10 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 			note_x[i] = note_xdef[i];
 	
 	//Load HUD textures
-	//if (id >= StageId_6_1 && id <= StageId_6_3)
-	Gfx_LoadTex(&stage.tex_hud0, IO_Read("\\STAGE\\HUD0.TIM;1"), GFX_LOADTEX_FREE);
+	if (id >= StageId_1_1 && id <= StageId_1_3)
+		Gfx_LoadTex(&stage.tex_hud0, IO_Read("\\STAGE\\HUD0W1.TIM;1"), GFX_LOADTEX_FREE);
+	else
+		Gfx_LoadTex(&stage.tex_hud0, IO_Read("\\STAGE\\HUD0.TIM;1"), GFX_LOADTEX_FREE);
 	Gfx_LoadTex(&stage.tex_hud1, IO_Read("\\STAGE\\HUD1.TIM;1"), GFX_LOADTEX_FREE);
 	
 	//Load stage background

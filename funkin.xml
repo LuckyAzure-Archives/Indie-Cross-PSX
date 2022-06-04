@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Defines the ISO project -->
-<iso_project image_name="funkin.bin" cue_sheet="funkin.cue" no_xa="0">
+<iso_project image_name="indie-cross.bin" cue_sheet="indie-cross.cue" no_xa="0">
 	<!-- Data track -->
 	<track type="data">
 		<!-- Identifiers -->
@@ -36,6 +36,7 @@
 			<!-- Stage assets -->
 			<dir name = "stage">
 				<file name = "hud0.tim" type = "data" source = "iso/images/hud0.tim"/>
+				<file name = "hud0w1.tim" type = "data" source = "iso/images/hud0week1.tim"/>
 				<file name = "hud1.tim" type = "data" source = "iso/images/hud1.tim"/>
 			</dir>
 			
@@ -44,10 +45,10 @@
 				<!-- Background art -->
 				<file name = "back.arc" type = "data" source = "iso/stages/week1/back.arc"/>
 				
-				<!-- Bopeebo charts -->
-				<file name = "1.1e.cht" type = "data" source = "iso/data/bopeebo-easy.json.cht"/>
-				<file name = "1.1n.cht" type = "data" source = "iso/data/bopeebo.json.cht"/>
-				<file name = "1.1h.cht" type = "data" source = "iso/data/bopeebo-hard.json.cht"/>
+				<!-- snake-eyes charts -->
+				<file name = "1.1e.cht" type = "data" source = "iso/data/snake-eyes-easy.json.cht"/>
+				<file name = "1.1n.cht" type = "data" source = "iso/data/snake-eyes.json.cht"/>
+				<file name = "1.1h.cht" type = "data" source = "iso/data/snake-eyes-hard.json.cht"/>
 				<!-- Fresh charts -->
 				<file name = "1.2e.cht" type = "data" source = "iso/data/fresh-easy.json.cht"/>
 				<file name = "1.2n.cht" type = "data" source = "iso/data/fresh.json.cht"/>
@@ -101,10 +102,7 @@
 			
 			<!-- Songs -->
 			<dir name = "songs">
-				<file name = "tutorial.mus" type = "data" source = "iso/songs/tutorial/tutorial.mus"/>
-				<file name = "bopeebo.mus" type = "data" source = "iso/songs/bopeebo/bopeebo.mus"/>
-				<file name = "fresh.mus" type = "data" source = "iso/songs/fresh/fresh.mus"/>
-				<file name = "dadbattl.mus" type = "data" source = "iso/songs/dadbattle/dadbattle.mus"/>
+				<file name = "cuphead1.mus" type = "data" source = "iso/songs/snake-eyes/snake-eyes.mus"/>
 				<file name = "devil.mus" type = "data" source = "iso/songs/devils-gambit/devils-gambit.mus"/>
 				<file name = "tooslow.mus" type = "data" source = "iso/songs/too-slow/too-slow.mus"/>
 			</dir>
@@ -112,6 +110,7 @@
 			<!-- Music -->
 			<dir name = "music">
 				<file name = "menu.mus" type = "data" source = "iso/music/freakyMenu/freakyMenu.mus"/>
+				<file name = "options.mus" type = "data" source = "iso/music/settings/settings.mus"/>
 				<file name = "gameover.mus" type = "data" source = "iso/music/gameover/gameover.mus"/>
 
 			</dir>

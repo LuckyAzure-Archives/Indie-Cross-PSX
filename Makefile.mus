@@ -1,8 +1,9 @@
 all: \
 	iso/music/freakymenu/freakymenu.mus \
 	iso/music/gameover/gameover.mus \
+	iso/music/settings/settings.mus \
 	iso/sounds/fnf_loss_sfx/fnf_loss_sfx.mus \
-	iso/songs/bopeebo/bopeebo.mus \
+	iso/songs/snake-eyes/snake-eyes.mus \
 	iso/songs/fresh/fresh.mus \
 	iso/songs/dadbattle/dadbattle.mus \
 	iso/songs/tutorial/tutorial.mus \
