@@ -17,7 +17,7 @@ Movie movie;
 
 STRFILE StrFile[] = {
 	// File name	Resolution		Frame count
-	{"\\VIDEOS\\C1.STR;1", 320, 240, 180,}
+	{"\\VIDEOS\\C1.STR;1", 320, 240, 481,}
 };
 
 void PlayMovie() {

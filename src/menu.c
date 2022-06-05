@@ -155,8 +155,8 @@ static const char *Menu_LowerIf(const char *text, boolean lower)
 
 static void Menu_DrawBack(s8 type)
 {
-	RECT back_dst = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 	RECT back_src = {0, 0, 255, 255};
+	RECT back_dst = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 	
 	switch (type)
 	{
@@ -164,9 +164,10 @@ static void Menu_DrawBack(s8 type)
 			back_src.x = 254;
 			back_src.w = 1;
 			Gfx_DrawTex(&menu.tex_title, &back_src, &back_dst);
+			break;
 		case 1:
-			RECT back_src = {0, 0, 255, 255};
 			Gfx_DrawTex(&menu.tex_back, &back_src, &back_dst);
+			break;
 	}
 }
 
