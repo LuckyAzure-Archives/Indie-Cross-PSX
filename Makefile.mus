@@ -4,9 +4,8 @@ all: \
 	iso/music/settings/settings.mus \
 	iso/sounds/fnf_loss_sfx/fnf_loss_sfx.mus \
 	iso/songs/snake-eyes/snake-eyes.mus \
-	iso/songs/fresh/fresh.mus \
-	iso/songs/dadbattle/dadbattle.mus \
-	iso/songs/tutorial/tutorial.mus \
+	iso/songs/technicolor-tussle/technicolor-tussle.mus \
+	iso/songs/knockout/knockout.mus \
 	iso/songs/devils-gambit/devils-gambit.mus \
 
 iso/%.mus: iso/%.txt

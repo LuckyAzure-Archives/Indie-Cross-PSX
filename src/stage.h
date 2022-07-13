@@ -37,18 +37,21 @@
 //Stage enums
 typedef enum
 {
-	StageId_1_1, //Bopeebo
-	StageId_1_2, //Fresh
-	StageId_1_3, //Dadbattle
-	StageId_1_4, //Tutorial
+	//Cuphead songs
+	StageId_1_1, //Snake Eyes
+	StageId_1_2, //Technicolor Tussle
+	StageId_1_3, //Knockout
+
+	//Sans Songs
+	StageId_2_1, //Whoopee
 	
+	//Nightmare Songs
 	StageId_DevilGambit, //Devil's Gambit
-	StageId_TooSlow, //Too Slow (D-side)
 	
 	StageId_Max
 } StageId;
 
-#define StageId_LastVanilla StageId_1_4
+#define StageId_LastVanilla StageId_1_3
 
 typedef enum
 {

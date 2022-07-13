@@ -4,12 +4,12 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef PSXF_GUARD_CUPHEAD_H
-#define PSXF_GUARD_CUPHEAD_H
+#ifndef PSXF_GUARD_NHCUPHEAD_H
+#define PSXF_GUARD_NHCUPHEAD_H
 
 #include "../character.h"
 
-//Dad character functions
-Character *Char_Cuphead_New(fixed_t x, fixed_t y);
+//Nightmare Cuphead character functions
+Character *Char_NMCuphead_New(fixed_t x, fixed_t y);
 
 #endif

@@ -45,22 +45,20 @@
 				<!-- Background art -->
 				<file name = "back.arc" type = "data" source = "iso/stages/week1/back.arc"/>
 				
-				<!-- snake-eyes charts -->
+				<!-- Snake Eyes charts -->
 				<file name = "1.1e.cht" type = "data" source = "iso/data/snake-eyes-easy.json.cht"/>
 				<file name = "1.1n.cht" type = "data" source = "iso/data/snake-eyes.json.cht"/>
 				<file name = "1.1h.cht" type = "data" source = "iso/data/snake-eyes-hard.json.cht"/>
-				<!-- Fresh charts -->
-				<file name = "1.2e.cht" type = "data" source = "iso/data/fresh-easy.json.cht"/>
-				<file name = "1.2n.cht" type = "data" source = "iso/data/fresh.json.cht"/>
-				<file name = "1.2h.cht" type = "data" source = "iso/data/fresh-hard.json.cht"/>
-				<!-- Dadbattle charts -->
-				<file name = "1.3e.cht" type = "data" source = "iso/data/dadbattle-easy.json.cht"/>
-				<file name = "1.3n.cht" type = "data" source = "iso/data/dadbattle.json.cht"/>
-				<file name = "1.3h.cht" type = "data" source = "iso/data/dadbattle-hard.json.cht"/>
-				<!-- Tutorial charts -->
-				<file name = "1.4e.cht" type = "data" source = "iso/data/tutorial-easy.json.cht"/>
-				<file name = "1.4n.cht" type = "data" source = "iso/data/tutorial.json.cht"/>
-				<file name = "1.4h.cht" type = "data" source = "iso/data/tutorial-hard.json.cht"/>
+
+				<!-- Technicolor Tussle charts -->
+				<file name = "1.2e.cht" type = "data" source = "iso/data/technicolor-tussle-easy.json.cht"/>
+				<file name = "1.2n.cht" type = "data" source = "iso/data/technicolor-tussle.json.cht"/>
+				<file name = "1.2h.cht" type = "data" source = "iso/data/technicolor-tussle-hard.json.cht"/>
+
+				<!-- Knockout charts -->
+				<file name = "1.3e.cht" type = "data" source = "iso/data/knockout-easy.json.cht"/>
+				<file name = "1.3n.cht" type = "data" source = "iso/data/knockout.json.cht"/>
+				<file name = "1.3h.cht" type = "data" source = "iso/data/knockout-hard.json.cht"/>
 				
 			</dir>
 			
@@ -81,6 +79,7 @@
 			<dir name = "char">
 				<!-- Boyfriend assets -->
 				<file name = "bf.arc" type = "data" source = "iso/characters/bf/main.arc"/>
+				<file name = "bfcup.arc" type = "data" source = "iso/characters/bfcup/main.arc"/>
 				
 				<!-- Girlfriend assets -->
 				<file name = "gf.arc" type = "data" source = "iso/characters/gf/main.arc"/>
@@ -89,16 +88,19 @@
 				
 				<!-- Cuphead assets -->
 				<file name = "cuphead.arc" type = "data" source = "iso/characters/cuphead/main.arc"/>
+				<file name = "nmcup.arc" type = "data" source = "iso/characters/nmcuphead/main.arc"/>
 			</dir>
 			
 			<!-- Videos -->
 			<dir name = "videos">
 				<file name = "c1.str" type = "str" source = "iso/videos/c1.str"/>
 			</dir>
-			
+	
 			<!-- Songs -->
 			<dir name = "songs">
 				<file name = "cuphead1.mus" type = "data" source = "iso/songs/snake-eyes/snake-eyes.mus"/>
+				<file name = "cuphead2.mus" type = "data" source = "iso/songs/technicolor-tussle/technicolor-tussle.mus"/>
+				<file name = "cuphead3.mus" type = "data" source = "iso/songs/knockout/knockout.mus"/>
 				<file name = "devil.mus" type = "data" source = "iso/songs/devils-gambit/devils-gambit.mus"/>
 			</dir>
 			

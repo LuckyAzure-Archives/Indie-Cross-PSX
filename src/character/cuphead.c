@@ -11,7 +11,7 @@
 #include "../stage.h"
 #include "../main.h"
 
-//cuphead character structure
+//Cuphead character structure
 enum
 {
 	cuphead_ArcMain_Idle,
@@ -66,7 +66,6 @@ static const CharFrame char_cuphead_frame[] = {
 
 static const Animation char_cuphead_anim[CharAnim_Max] = {
 	{2, (const u8[]){ 0, 1, 2, 3, ASCR_BACK, 0}}, //CharAnim_Idle
-	{0, (const u8[]){ASCR_CHGANI, CharAnim_Idle}},   //CharAnim_IdleAlt
 	{2, (const u8[]){ 4, 5, 6, 7, ASCR_BACK, 0}},         //CharAnim_Left
 	{0, (const u8[]){ASCR_CHGANI, CharAnim_Idle}},   //CharAnim_LeftAlt
 	{2, (const u8[]){ 8, 9, 10, 11, ASCR_BACK, 0}},         //CharAnim_Down
@@ -145,8 +144,10 @@ Character *Char_cuphead_New(fixed_t x, fixed_t y)
 	this->character.health_i = 1;
 	
 	this->character.focus_x = FIXED_DEC(0,1);
-	this->character.focus_y = FIXED_DEC(-115,1);
-	this->character.focus_zoom = FIXED_DEC(9,10);
+	this->character.focus_y = FIXED_DEC(-95,1);
+	this->character.focus_zoom = FIXED_DEC(1,1);
+
+	this->character.size = FIXED_DEC(1,1);
 	
 	//Load art
 	this->arc_main = IO_Read("\\CHAR\\CUPHEAD.ARC;1");

@@ -1,72 +1,72 @@
-	{ //StageId_1_1 (Bopeebo)
+	{ //StageId_1_1 (Snake Eyes)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
-		{Char_cuphead_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_BFCup_New,    FIXED_DEC(150,1),  FIXED_DEC(30,1)},
+		{Char_cuphead_New, FIXED_DEC(-35,1),  FIXED_DEC(30,1)},
+		{NULL},
 		
 		//Stage background
 		Back_Week1_New,
 		
 		//Song info
-		{FIXED_DEC(1,1),FIXED_DEC(1,1),FIXED_DEC(13,10)},
+		{FIXED_DEC(24,10),FIXED_DEC(26,10),FIXED_DEC(28,10)},
 		1, 1,
 		"\\SONGS\\CUPHEAD1.MUS;1",
 		
 		StageId_1_2, STAGE_LOAD_FLAG
 	},
-	{ //StageId_1_2 (Fresh)
+	{ //StageId_1_2 (Technicolor Tussle)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
-		{Char_cuphead_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_BFCup_New,    FIXED_DEC(150,1),  FIXED_DEC(30,1)},
+		{Char_cuphead_New, FIXED_DEC(-35,1),  FIXED_DEC(30,1)},
+		{NULL},
 		
 		//Stage background
 		Back_Week1_New,
 		
 		//Song info
-		{FIXED_DEC(1,1),FIXED_DEC(13,10),FIXED_DEC(18,10)},
+		{FIXED_DEC(21,10),FIXED_DEC(25,10),FIXED_DEC(25,10)},
 		1, 2,
-		"\\SONGS\\FRESH.MUS;1",
+		"\\SONGS\\CUPHEAD2.MUS;1",
 		
 		StageId_1_3, STAGE_LOAD_FLAG
 	},
-	{ //StageId_1_3 (Dadbattle)
+	{ //StageId_1_3 (Knockout)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
-		{Char_cuphead_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_BFCup_New,    FIXED_DEC(150,1),  FIXED_DEC(30,1)},
+		{Char_cuphead_New, FIXED_DEC(-35,1),  FIXED_DEC(30,1)},
+		{NULL},
 		
 		//Stage background
 		Back_Week1_New,
 		
 		//Song info
-		{FIXED_DEC(13,10),FIXED_DEC(15,10),FIXED_DEC(23,10)},
+		{FIXED_DEC(24,10),FIXED_DEC(26,10),FIXED_DEC(28,10)},
 		1, 3,
-		"\\SONGS\\DADBATTL.MUS;1",
+		"\\SONGS\\CUPHEAD3.MUS;1",
 		
 		StageId_1_3, 0
 	},
-	{ //StageId_1_4 (Tutorial)
+	{ //StageId_2_1 (Whoopee)
 		//Characters
-		{Char_BF_New, FIXED_DEC(60,1),  FIXED_DEC(100,1)},
-		{Char_GF_New,  FIXED_DEC(0,1),  FIXED_DEC(-15,1)}, //TODO
-		{NULL,           FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_BFCup_New,    FIXED_DEC(140,1),  FIXED_DEC(85,1)},
+		{Char_cuphead_New, FIXED_DEC(-20,1),  FIXED_DEC(85,1)},
+		{NULL},
 		
 		//Stage background
-		Back_Week1_New,
+		Back_Week2_New,
 		
 		//Song info
-		{FIXED_DEC(1,1),FIXED_DEC(1,1),FIXED_DEC(1,1)},
-		1, 4,
-		"\\SONGS\\TUTORIAL.MUS;1",
+		{FIXED_DEC(24,10),FIXED_DEC(26,10),FIXED_DEC(28,10)},
+		1, 1,
+		"\\SONGS\\CUPHEAD1.MUS;1",
 		
-		StageId_1_4, 0
+		StageId_1_2, STAGE_LOAD_FLAG
 	},
 	{ //StageId_DevilGambit (Devils-Gambit)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
-		{Char_cuphead_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
-		{NULL,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_BFCup_New,    FIXED_DEC(150,1),  FIXED_DEC(30,1)},
+		{Char_NMCuphead_New, FIXED_DEC(-35,1),  FIXED_DEC(30,1)},
+		{NULL},
 		
 		//Stage background
 		Back_Week1_New,
@@ -78,19 +78,3 @@
 		
 		StageId_DevilGambit, 0
 	},
-	{ //StageId_TooSlow (Devils-Gambit)
-		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
-		{Char_cuphead_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
-		{NULL,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
-		
-		//Stage background
-		Back_Week1_New,
-		
-		//Song info
-		{FIXED_DEC(13,10),FIXED_DEC(15,10),FIXED_DEC(23,10)},
-		0x80, 2,
-		"\\SONGS\\TOOSLOW.MUS;1",
-		
-		StageId_TooSlow, 0
-	}

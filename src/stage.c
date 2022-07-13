@@ -111,8 +111,10 @@ static const u8 note_anims[4][3] = {
 
 //Stage definitions
 #include "character/bf.h"
-#include "character/gf.h"
+#include "character/bfcup.h"
 #include "character/cuphead.h"
+#include "character/nmcuphead.h"
+#include "character/gf.h"
 
 #include "stage/dummy.h"
 #include "stage/week1.h"
@@ -301,8 +303,8 @@ static u8 Stage_HitNote(PlayerState *this, u8 type, fixed_t offset)
 		{
 			//Create splash object
 			Obj_Splash *splash = Obj_Splash_New(
-				note_x[type ^ stage.note_swap],
-				note_y[type ^ stage.note_swap] * (stage.downscroll ? -1 : 1),
+				note_x[type],
+				note_y[type] * (stage.downscroll ? -1 : 1),
 				type & 0x3
 			);
 			if (splash != NULL)
@@ -374,11 +376,7 @@ static void Stage_NoteCheck(PlayerState *this, u8 type)
 			//Hit the mine
 			note->type |= NOTE_FLAG_HIT;
 			
-			//if (stage.stage_id == StageId_Clwn_4)
-			if (false)
-				this->health = -0x7000;
-			else
-				this->health -= 2000;
+			this->health -= 2000;
 			if (this->character->spec & CHAR_SPEC_MISSANIM)
 				this->character->set_anim(this->character, note_anims[type & 0x3][2]);
 			else
@@ -538,40 +536,7 @@ void Stage_DrawTexCol(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixe
 	fixed_t hz = dst->h;
 	
 	//if (stage.stage_id >= StageId_6_1 && stage.stage_id <= StageId_6_3)
-	if (false)
-	{
 		//Handle HUD drawing
-		if (tex == &stage.tex_hud0)
-		{
-			#ifdef STAGE_NOHUD
-				return;
-			#endif
-			if (src->y >= 128 && src->y < 224)
-			{
-				//Pixel perfect scrolling
-				xz &= FIXED_UAND;
-				yz &= FIXED_UAND;
-				wz &= FIXED_UAND;
-				hz &= FIXED_UAND;
-			}
-		}
-		if (tex == &stage.tex_hud1)
-		{
-			#ifdef STAGE_NOHUD
-				return;
-			#endif
-		}
-		else
-		{
-			//Pixel perfect scrolling
-			xz &= FIXED_UAND;
-			yz &= FIXED_UAND;
-			wz &= FIXED_UAND;
-			hz &= FIXED_UAND;
-		}
-	}
-	else
-	{
 		//Don't draw if HUD and is disabled
 		if (tex == &stage.tex_hud0 || tex == &stage.tex_hud1)
 		{
@@ -579,7 +544,6 @@ void Stage_DrawTexCol(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixe
 				return;
 			#endif
 		}
-	}
 	
 	fixed_t l = (SCREEN_WIDTH2  << FIXED_SHIFT) + FIXED_MUL(xz, zoom);// + FIXED_DEC(1,2);
 	fixed_t t = (SCREEN_HEIGHT2 << FIXED_SHIFT) + FIXED_MUL(yz, zoom);// + FIXED_DEC(1,2);
@@ -748,7 +712,7 @@ static void Stage_DrawStrum(u8 i, RECT *note_src, RECT_FIXED *note_dst)
 {
 	(void)note_dst;
 	
-	PlayerState *this = &stage.player_state[(i & NOTE_FLAG_OPPONENT) != 0];
+	PlayerState *this = &stage.player_state[((i ^ stage.note_swap) & NOTE_FLAG_OPPONENT) != 0];
 	i &= 0x3;
 	
 	if (this->arrow_hitan[i] > 0)
@@ -820,12 +784,12 @@ static void Stage_DrawNotes(void)
 		}
 		
 		//Get note information
-		u8 i = (note->type & NOTE_FLAG_OPPONENT) != 0;
+		u8 i = ((note->type ^ stage.note_swap) & NOTE_FLAG_OPPONENT) != 0;
 		PlayerState *this = &stage.player_state[i];
 		
 		fixed_t note_fp = (fixed_t)note->pos << FIXED_SHIFT;
 		fixed_t time = (scroll.start - stage.song_time) + (scroll.length * (note->pos - scroll.start_step) / scroll.length_step);
-		fixed_t y = note_y[(note->type & 0x7) ^ stage.note_swap] + FIXED_MUL(stage.speed, time * 150);
+		fixed_t y = note_y[(note->type & 0x7)] + FIXED_MUL(stage.speed, time * 150);
 		
 		//Check if went above screen
 		if (y < FIXED_DEC(-16 - SCREEN_HEIGHT2, 1))
@@ -835,7 +799,7 @@ static void Stage_DrawNotes(void)
 				continue;
 			
 			//Miss note if player's note
-			if (!(note->type & (bot | NOTE_FLAG_HIT | NOTE_FLAG_MINE)))
+			if (!((note->type ^ stage.note_swap) & (bot | NOTE_FLAG_HIT | NOTE_FLAG_MINE)))
 			{
 				if (stage.mode < StageMode_Net1 || i == ((stage.mode == StageMode_Net1) ? 0 : 1))
 				{
@@ -871,9 +835,9 @@ static void Stage_DrawNotes(void)
 				//Check for sustain clipping
 				fixed_t clip;
 				y -= scroll.size;
-				if ((note->type & (bot | NOTE_FLAG_HIT)) || ((this->pad_held & note_key[note->type & 0x3]) && (note_fp + stage.late_sus_safe >= stage.note_scroll)))
+				if (((note->type ^ stage.note_swap) & (bot | NOTE_FLAG_HIT)) || ((this->pad_held & note_key[note->type & 0x3]) && (note_fp + stage.late_sus_safe >= stage.note_scroll)))
 				{
-					clip = note_y[(note->type & 0x7) ^ stage.note_swap] - y;
+					clip = FIXED_DEC(32 - SCREEN_HEIGHT2, 1) - y;
 					if (clip < 0)
 						clip = 0;
 				}
@@ -881,6 +845,7 @@ static void Stage_DrawNotes(void)
 				{
 					clip = 0;
 				}
+				
 				
 				//Draw sustain
 				if (note->type & NOTE_FLAG_SUSTAIN_END)
@@ -892,7 +857,7 @@ static void Stage_DrawNotes(void)
 						note_src.w = 32;
 						note_src.h = 28 - (clip >> FIXED_SHIFT);
 						
-						note_dst.x = note_x[(note->type & 0x7) ^ stage.note_swap] - FIXED_DEC(16,1);
+						note_dst.x = note_x[(note->type & 0x7)] - FIXED_DEC(16,1);
 						note_dst.y = y + clip;
 						note_dst.w = note_src.w << FIXED_SHIFT;
 						note_dst.h = (note_src.h << FIXED_SHIFT);
@@ -912,7 +877,7 @@ static void Stage_DrawNotes(void)
 				{
 					//Get note height
 					fixed_t next_time = (scroll.start - stage.song_time) + (scroll.length * (note->pos + 12 - scroll.start_step) / scroll.length_step);
-					fixed_t next_y = note_y[(note->type & 0x7) ^ stage.note_swap] + FIXED_MUL(stage.speed, next_time * 150) - scroll.size;
+					fixed_t next_y = note_y[(note->type & 0x7)] + FIXED_MUL(stage.speed, next_time * 150) - scroll.size;
 					fixed_t next_size = next_y - y;
 					
 					if (clip < next_size)
@@ -922,7 +887,7 @@ static void Stage_DrawNotes(void)
 						note_src.w = 32;
 						note_src.h = 16;
 						
-						note_dst.x = note_x[(note->type & 0x7) ^ stage.note_swap] - FIXED_DEC(16,1);
+						note_dst.x = note_x[(note->type & 0x7)] - FIXED_DEC(16,1);
 						note_dst.y = y + clip;
 						note_dst.w = note_src.w << FIXED_SHIFT;
 						note_dst.h = (next_y - y) - clip;
@@ -948,7 +913,7 @@ static void Stage_DrawNotes(void)
 				note_src.w = 32;
 				note_src.h = 32;
 				
-				note_dst.x = note_x[(note->type & 0x7) ^ stage.note_swap] - FIXED_DEC(16,1);
+				note_dst.x = note_x[(note->type & 0x7)] - FIXED_DEC(16,1);
 				note_dst.y = y - FIXED_DEC(16,1);
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
@@ -1006,7 +971,7 @@ static void Stage_DrawNotes(void)
 				note_src.w = 32;
 				note_src.h = 32;
 				
-				note_dst.x = note_x[(note->type & 0x7) ^ stage.note_swap] - FIXED_DEC(16,1);
+				note_dst.x = note_x[(note->type & 0x7)] - FIXED_DEC(16,1);
 				note_dst.y = y - FIXED_DEC(16,1);
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
@@ -1023,16 +988,6 @@ static void Stage_DrawNotes(void)
 }
 
 //Stage loads
-static void Stage_SwapChars(void)
-{
-	if (stage.mode == StageMode_Swap)
-	{
-		Character *temp = stage.player;
-		stage.player = stage.opponent;
-		stage.opponent = temp;
-	}
-}
-
 static void Stage_LoadPlayer(void)
 {
 	//Load player character
@@ -1146,19 +1101,6 @@ static void Stage_LoadChart(void)
 			stage.num_notes++;
 	#endif
 	
-	//Swap chart
-	if (stage.mode == StageMode_Swap)
-	{
-		for (Note *note = stage.notes; note->pos != 0xFFFF; note++)
-			note->type ^= NOTE_FLAG_OPPONENT;
-		for (Section *section = stage.sections;; section++)
-		{
-			section->flag ^= SECTION_FLAG_OPPFOCUS;
-			if (section->end == 0xFFFF)
-				break;
-		}
-	}
-	
 	//Count max scores
 	stage.player_state[0].max_score = 0;
 	stage.player_state[1].max_score = 0;
@@ -1222,8 +1164,16 @@ static void Stage_LoadState(void)
 	
 	stage.state = StageState_Play;
 	
-	stage.player_state[0].character = stage.player;
-	stage.player_state[1].character = stage.opponent;
+	if (stage.mode == StageMode_Swap)
+	{
+		stage.player_state[0].character = stage.opponent;
+		stage.player_state[1].character = stage.player;
+	}
+	else
+	{
+		stage.player_state[0].character = stage.player;
+		stage.player_state[1].character = stage.opponent;
+	}
 	for (int i = 0; i < 2; i++)
 	{
 		memset(stage.player_state[i].arrow_hitan, 0, sizeof(stage.player_state[i].arrow_hitan));
@@ -1257,17 +1207,15 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 	stage.stage_diff = difficulty;
 	stage.story = story;
 	
-	int i;
-	
 	if(stage.widescreen)
-		for (i = 0; i < 8; ++i)
+		for (u8 i = 0; i < 8; ++i)
 			note_x[i] = note_xwidedef[i];
 	else
-		for (i = 0; i < 8; ++i)
+		for (u8 i = 0; i < 8; ++i)
 			note_x[i] = note_xdef[i];
 	
 	//Load HUD textures
-	if (id >= StageId_1_1 && id <= StageId_1_3)
+	if ((id >= StageId_1_1 && id <= StageId_1_3) || (id == StageId_DevilGambit))
 		Gfx_LoadTex(&stage.tex_hud0, IO_Read("\\STAGE\\HUD0W1.TIM;1"), GFX_LOADTEX_FREE);
 	else
 		Gfx_LoadTex(&stage.tex_hud0, IO_Read("\\STAGE\\HUD0.TIM;1"), GFX_LOADTEX_FREE);
@@ -1280,7 +1228,6 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 	Stage_LoadPlayer();
 	Stage_LoadOpponent();
 	Stage_LoadGirlfriend();
-	Stage_SwapChars();
 	
 	//Load stage chart
 	Stage_LoadChart();
@@ -1362,7 +1309,6 @@ static boolean Stage_NextLoad(void)
 			Stage_LoadStage();
 		
 		//Load characters
-		Stage_SwapChars();
 		if (load & STAGE_LOAD_PLAYER)
 		{
 			Stage_LoadPlayer();
@@ -1381,7 +1327,6 @@ static boolean Stage_NextLoad(void)
 			stage.opponent->x = stage.stage_def->ochar.x;
 			stage.opponent->y = stage.stage_def->ochar.y;
 		}
-		Stage_SwapChars();
 		if (load & STAGE_LOAD_GIRLFRIEND)
 		{
 			Stage_LoadGirlfriend();
@@ -1616,11 +1561,6 @@ void Stage_Tick(void)
 				//Check if screen should bump
 				boolean is_bump_step = (stage.song_step & 0xF) == 0;
 				
-				//M.I.L.F bumps
-				//if (stage.stage_id == StageId_4_3 && stage.song_step >= (168 << 2) && stage.song_step < (200 << 2))
-				if (false)
-					is_bump_step = (stage.song_step & 0x3) == 0;
-				
 				//Bump screen
 				if (is_bump_step)
 					stage.bump = FIXED_DEC(103,100);
@@ -1655,9 +1595,10 @@ void Stage_Tick(void)
 							break;
 						
 						//Opponent note hits
-						if (playing && (note->type & NOTE_FLAG_OPPONENT) && !(note->type & NOTE_FLAG_HIT))
+						if (playing && ((note->type ^ stage.note_swap) & NOTE_FLAG_OPPONENT) && !(note->type & NOTE_FLAG_HIT))
 						{
 							//Opponent hits note
+							stage.player_state[1].arrow_hitan[note->type & 0x3] = stage.step_time;
 							Stage_StartVocal();
 							if (note->type & NOTE_FLAG_SUSTAIN)
 								opponent_snote = note_anims[note->type & 0x3][(note->type & NOTE_FLAG_ALT_ANIM) != 0];
@@ -1668,9 +1609,9 @@ void Stage_Tick(void)
 					}
 					
 					if (opponent_anote != CharAnim_Idle)
-						stage.opponent->set_anim(stage.opponent, opponent_anote);
+						stage.player_state[1].character->set_anim(stage.player_state[1].character, opponent_anote);
 					else if (opponent_snote != CharAnim_Idle)
-						stage.opponent->set_anim(stage.opponent, opponent_snote);
+						stage.player_state[1].character->set_anim(stage.player_state[1].character, opponent_snote);
 					break;
 				}
 				case StageMode_2P:
@@ -1702,9 +1643,7 @@ void Stage_Tick(void)
 				
 				//Display score
 				RECT score_src = {80, 224, 34, 9};
-				RECT_FIXED score_dst = {FIXED_DEC(-152,1), (SCREEN_HEIGHT2 - 24) << FIXED_SHIFT, FIXED_DEC(34,1), FIXED_DEC(9,1)};
-				if (false)
-					score_dst.y = -score_dst.y - score_dst.h;
+				RECT_FIXED score_dst = {(i == 0 && stage.mode == StageMode_2P) ? FIXED_DEC(52,1) : FIXED_DEC(-152,1), (SCREEN_HEIGHT2 - 24) << FIXED_SHIFT, FIXED_DEC(34,1), FIXED_DEC(9,1)};
 				
 				Stage_DrawTex(&stage.tex_hud0, &score_src, &score_dst, stage.bump);
 				
@@ -1749,19 +1688,17 @@ void Stage_Tick(void)
 					this->refresh_miss = false;
 				}
 				
-				//Display score
-				RECT score_src = {169, 246, 65, 9};
-				RECT_FIXED score_dst = {FIXED_DEC(-152,1), (SCREEN_HEIGHT2 - 36) << FIXED_SHIFT, FIXED_DEC(score_src.w,1), FIXED_DEC(score_src.h,1)};
-				if (false)
-					score_dst.y = -score_dst.y - score_dst.h;
+				//Display Combo Break
+				RECT miss_src = {169, 246, 65, 9};
+				RECT_FIXED miss_dst = {(i == 0 && stage.mode == StageMode_2P) ? FIXED_DEC(52,1) : FIXED_DEC(-152,1), (SCREEN_HEIGHT2 - 36) << FIXED_SHIFT, FIXED_DEC(miss_src.w,1), FIXED_DEC(miss_src.h,1)};
 				
-				Stage_DrawTex(&stage.tex_hud0, &score_src, &score_dst, stage.bump);
+				Stage_DrawTex(&stage.tex_hud0, &miss_src, &miss_dst, stage.bump);
 				
 				//Draw number
-				score_src.y = 240;
-				score_src.w = 8;
-				score_dst.x += FIXED_DEC(37,1);
-				score_dst.w = FIXED_DEC(8,1);
+				miss_src.y = 240;
+				miss_src.w = 8;
+				miss_dst.x += FIXED_DEC(37,1);
+				miss_dst.w = FIXED_DEC(8,1);
 				
 				for (const char *p = this->miss_text; ; p++)
 				{
@@ -1772,16 +1709,16 @@ void Stage_Tick(void)
 					
 					//Draw character
 					if (c == '-')
-						score_src.x = 160;
+						miss_src.x = 160;
 					else if (c == '.')
-						score_src.x = 160;
+						miss_src.x = 160;
 					else //Should be a number
-						score_src.x = 80 + ((c - '0') << 3);
+						miss_src.x = 80 + ((c - '0') << 3);
 					
-					Stage_DrawTex(&stage.tex_hud0, &score_src, &score_dst, stage.bump);
+					Stage_DrawTex(&stage.tex_hud0, &miss_src, &miss_dst, stage.bump);
 					
 					//Move character right
-					score_dst.x += FIXED_DEC(7,1);
+					miss_dst.x += FIXED_DEC(7,1);
 				}
 			}
 			
@@ -1803,19 +1740,17 @@ void Stage_Tick(void)
 					this->refresh_accuracy = false;
 				}
 				
-				//Display score
-				RECT score_src = {169, 236, 51, 9};
-				RECT_FIXED score_dst = {FIXED_DEC(-152,1), (SCREEN_HEIGHT2 - 48) << FIXED_SHIFT, FIXED_DEC(51,1), FIXED_DEC(9,1)};
-				if (false)
-					score_dst.y = -score_dst.y - score_dst.h;
+				//Display Accuracy
+				RECT accuracy_src = {169, 236, 51, 9};
+				RECT_FIXED accuracy_dst = {(i == 0 && stage.mode == StageMode_2P) ? FIXED_DEC(52,1) : FIXED_DEC(-152,1), (SCREEN_HEIGHT2 - 48) << FIXED_SHIFT, FIXED_DEC(51,1), FIXED_DEC(9,1)};
 				
-				Stage_DrawTex(&stage.tex_hud0, &score_src, &score_dst, stage.bump);
+				Stage_DrawTex(&stage.tex_hud0, &accuracy_src, &accuracy_dst, stage.bump);
 				
 				//Draw number
-				score_src.y = 240;
-				score_src.w = 8;
-				score_dst.x += FIXED_DEC(52,1);
-				score_dst.w = FIXED_DEC(8,1);
+				accuracy_src.y = 240;
+				accuracy_src.w = 8;
+				accuracy_dst.x += FIXED_DEC(52,1);
+				accuracy_dst.w = FIXED_DEC(8,1);
 				
 				for (const char *p = this->accuracy_text; ; p++)
 				{
@@ -1826,21 +1761,21 @@ void Stage_Tick(void)
 					
 					//Draw character
 					if (c == '-')
-						score_src.x = 160;
+						accuracy_src.x = 160;
 					else if (c == '.')
-						score_src.x = 160;
+						accuracy_src.x = 160;
 					else //Should be a number
-						score_src.x = 80 + ((c - '0') << 3);
+						accuracy_src.x = 80 + ((c - '0') << 3);
 					
-					Stage_DrawTex(&stage.tex_hud0, &score_src, &score_dst, stage.bump);
+					Stage_DrawTex(&stage.tex_hud0, &accuracy_src, &accuracy_dst, stage.bump);
 					
 					//Move character right
-					score_dst.x += FIXED_DEC(7,1);
+					accuracy_dst.x += FIXED_DEC(7,1);
 				}
 				
 				RECT accur_src = {138, 223, 9, 11};
 				
-				RECT_FIXED accur_dst = {score_dst.x, score_dst.y - FIXED_DEC(1,1), FIXED_DEC(9,1), FIXED_DEC(11,1)};
+				RECT_FIXED accur_dst = {accuracy_dst.x, accuracy_dst.y - FIXED_DEC(1,1), FIXED_DEC(9,1), FIXED_DEC(11,1)};
 				Stage_DrawTex(&stage.tex_hud0, &accur_src, &accur_dst, stage.bump);
 			}			
 			
@@ -1857,8 +1792,8 @@ void Stage_Tick(void)
 			for (u8 i = 0; i < 4; i++)
 			{
 				//BF
-				note_dst.x = note_x[i ^ stage.note_swap] - FIXED_DEC(16,1);
-				note_dst.y = note_y[i ^ stage.note_swap] - FIXED_DEC(16,1);
+				note_dst.x = note_x[i] - FIXED_DEC(16,1);
+				note_dst.y = note_y[i] - FIXED_DEC(16,1);
 				if (stage.downscroll)
 					note_dst.y = -note_dst.y - note_dst.h;
 				
@@ -1866,8 +1801,8 @@ void Stage_Tick(void)
 				Stage_DrawTex(&stage.tex_hud0, &note_src, &note_dst, stage.bump);
 				
 				//Opponent
-				note_dst.x = note_x[(i | 0x4) ^ stage.note_swap] - FIXED_DEC(16,1);
-				note_dst.y = note_y[(i | 0x4) ^ stage.note_swap] - FIXED_DEC(16,1);
+				note_dst.x = note_x[(i | 0x4)] - FIXED_DEC(16,1);
+				note_dst.y = note_y[(i | 0x4)] - FIXED_DEC(16,1);
 				
 				if (stage.downscroll)
 					note_dst.y = -note_dst.y - note_dst.h;
@@ -2000,7 +1935,6 @@ void Stage_Tick(void)
 			ObjectList_Free(&stage.objlist_bg);
 			
 			//Free opponent and girlfriend
-			Stage_SwapChars();
 			Character_Free(stage.opponent);
 			stage.opponent = NULL;
 			Character_Free(stage.gf);

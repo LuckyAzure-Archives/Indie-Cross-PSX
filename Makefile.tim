@@ -7,12 +7,14 @@ all: \
 	iso/images/hud0week1.tim \
 	iso/images/hud1.tim \
 	iso/characters/bf/main.arc \
+	iso/characters/bfcup/main.arc \
+	iso/characters/cuphead/main.arc \
+	iso/characters/bfsans/main.arc \
 	iso/characters/gf/main.arc \
 	iso/characters/gf/tut.arc \
 	iso/characters/gf/speaker.tim \
 	iso/stages/week1/back.arc \
 	iso/stages/week2/back.arc \
-	iso/characters/cuphead/main.arc \
 	iso/characters/nmcuphead/main.arc \
 
 iso/%.tim: iso/%.png
@@ -27,15 +29,21 @@ iso/images/menu/menu.arc: iso/images/menu/back.tim iso/images/menu/ng.tim iso/im
 # BF
 iso/characters/bf/main.arc: iso/characters/bf/bf0.tim iso/characters/bf/bf1.tim iso/characters/bf/bf2.tim iso/characters/bf/bf3.tim iso/characters/bf/bf4.tim iso/characters/bf/bf5.tim iso/characters/bf/bf6.tim iso/characters/bf/dead0.tim iso/characters/bf/dead1.tim iso/characters/bf/dead2.tim iso/characters/bf/retry.tim
 
+# BF Cuphead
+iso/characters/bfcup/main.arc: iso/characters/bfcup/bf0.tim iso/characters/bfcup/bf1.tim iso/characters/bfcup/bf2.tim iso/characters/bfcup/bf3.tim iso/characters/bfcup/bf4.tim iso/characters/bfcup/bf5.tim iso/characters/bfcup/bf6.tim iso/characters/bfcup/dead0.tim iso/characters/bfcup/dead1.tim iso/characters/bfcup/dead2.tim iso/characters/bfcup/retry.tim
+
+# BF Sans
+iso/characters/bfsans/main.arc: iso/characters/bfsans/bf0.tim iso/characters/bfsans/bf1.tim iso/characters/bfsans/bf2.tim iso/characters/bfsans/bf3.tim iso/characters/bfsans/bf4.tim iso/characters/bfsans/bf5.tim iso/characters/bfsans/bf6.tim iso/characters/bfsans/dead0.tim iso/characters/bfsans/dead1.tim iso/characters/bfsans/dead2.tim iso/characters/bfsans/retry.tim iso/characters/bfsans/bfb0.tim iso/characters/bfsans/bfb1.tim iso/characters/bfsans/bfb2.tim iso/characters/bfsans/bfb3.tim
+
 # GF
 iso/gf/main.arc: iso/characters/gf/gf0.tim iso/characters/gf/gf1.tim iso/characters/gf/gf2.tim
 iso/characters/gf/tut.arc: iso/characters/gf/tut0.tim iso/characters/gf/tut1.tim
 
 # Week 1
-iso/stages/week1/back.arc: iso/stages/week1/back0.tim iso/stages/week1/back1.tim
+iso/stages/week1/back.arc: iso/stages/week1/back0.tim iso/stages/week1/back1.tim iso/stages/week1/back2.tim
 
 # Week 2
-iso/stages/week2/back.arc: iso/stages/week2/back0.tim iso/stages/week2/back1.tim iso/stages/week2/back2.tim
+iso/stages/week2/back.arc: iso/stages/week2/back0.tim iso/stages/week2/back1.tim
 
 # Cuphead
 iso/characters/cuphead/main.arc: iso/characters/cuphead/idle.tim iso/characters/cuphead/left.tim iso/characters/cuphead/down.tim iso/characters/cuphead/up.tim iso/characters/cuphead/right.tim
