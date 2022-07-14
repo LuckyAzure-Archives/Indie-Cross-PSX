@@ -26,13 +26,14 @@ struct Section
 #define NOTE_FLAG_SUSTAIN     (1 << 3) //Note is a sustain note
 #define NOTE_FLAG_SUSTAIN_END (1 << 4) //Is either end of sustain
 #define NOTE_FLAG_ALT_ANIM    (1 << 5) //Note plays alt animation
-#define NOTE_FLAG_MINE        (1 << 6) //Note is a mine
-#define NOTE_FLAG_HIT         (1 << 7) //Note has been hit
+#define NOTE_FLAG_MINE     	  (1 << 6) //Note is a mine 
+#define NOTE_FLAG_GOOD   	  (1 << 7) //Note is a good one(u can hit without die)
+#define NOTE_FLAG_HIT         (1 << 8) //Note has been hit
 
 struct Note
 {
 	uint16_t pos; //1/12 steps
-	uint8_t type, pad = 0;
+	uint16_t type, pad = 0;
 };
 
 uint16_t PosRound(double pos, double crochet)
@@ -115,7 +116,7 @@ int main(int argc, char *argv[])
 			Note new_note;
 			int sustain = (int)PosRound(j[2], step_crochet) - 1;
 			new_note.pos = (step_base * 12) + PosRound(((double)j[0] - milli_base) * 12.0, step_crochet);
-			new_note.type = (uint8_t)j[1] & (3 | NOTE_FLAG_OPPONENT);
+			new_note.type = (uint16_t)j[1] & (3 | NOTE_FLAG_OPPONENT);
 			if (is_opponent)
 				new_note.type ^= NOTE_FLAG_OPPONENT;
 			else if ((new_note.type & NOTE_FLAG_OPPONENT) && is_alt)
@@ -125,8 +126,15 @@ int main(int argc, char *argv[])
 			if (j[1] >= 104)
 				if (j[1] <= 111)
 					new_note.type |= NOTE_FLAG_MINE;
-			if (j[3] == "Ice Note")
+
+			if (((uint8_t)j[1]) & 8 && ((uint8_t)j[1]) < 21)
 				new_note.type |= NOTE_FLAG_MINE;
+			if (((uint8_t)j[1]) & 16)
+				new_note.type |= NOTE_FLAG_GOOD;
+
+			if (((uint8_t)j[1]) & 32)
+			new_note.type |= NOTE_FLAG_GOOD;
+
 			
 			if (note_fudge.count(*((uint32_t*)&new_note)))
 			{

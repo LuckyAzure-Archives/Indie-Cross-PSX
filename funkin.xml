@@ -66,6 +66,11 @@
 			<dir name = "week2">
 				<!-- Background art -->
 				<file name = "back.arc" type = "data" source = "iso/stages/week2/back.arc"/>
+
+				<!-- Whoopee charts -->
+				<file name = "2.1e.cht" type = "data" source = "iso/data/whoopee-easy.json.cht"/>
+				<file name = "2.1n.cht" type = "data" source = "iso/data/whoopee.json.cht"/>
+				<file name = "2.1h.cht" type = "data" source = "iso/data/whoopee-hard.json.cht"/>
 			</dir>
 			
 			<dir name = "custom">
@@ -102,6 +107,7 @@
 				<file name = "cuphead2.mus" type = "data" source = "iso/songs/technicolor-tussle/technicolor-tussle.mus"/>
 				<file name = "cuphead3.mus" type = "data" source = "iso/songs/knockout/knockout.mus"/>
 				<file name = "devil.mus" type = "data" source = "iso/songs/devils-gambit/devils-gambit.mus"/>
+				<file name = "sans1.mus" type = "data" source = "iso/songs/whoopee/whoopee.mus"/>
 			</dir>
 			
 			<!-- Music -->
@@ -114,6 +120,11 @@
 			<!-- Sound -->
 			<dir name = "sounds">
 				<file name = "micdrop.mus" type = "data" source = "iso/sounds/fnf_loss_sfx/fnf_loss_sfx.mus"/>
+
+				<!-- Menu -->
+				<file name = "confirm.vag" type = "data" source = "iso/sounds/menu/confirm.vag"/>
+				<file name = "scroll.vag" type = "data" source = "iso/sounds/menu/scroll.vag"/>
+				<file name = "cancel.vag" type = "data" source = "iso/sounds/menu/cancel.vag"/>
 			</dir>
 			
 			<!-- Dummy sectors -->

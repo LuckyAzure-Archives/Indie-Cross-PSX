@@ -343,7 +343,7 @@ static void Stage_NoteCheck(PlayerState *this, u8 type)
 	//Perform note check
 	for (Note *note = stage.cur_note;; note++)
 	{
-		if (!(note->type & NOTE_FLAG_MINE))
+		if (!(note->type & (NOTE_FLAG_MINE | NOTE_FLAG_GOOD)))
 		{
 			//Check if note can be hit
 			fixed_t note_fp = (fixed_t)note->pos << FIXED_SHIFT;
@@ -362,13 +362,14 @@ static void Stage_NoteCheck(PlayerState *this, u8 type)
 			this->arrow_hitan[type & 0x3] = stage.step_time;
 			return;
 		}
-		else
+
+		else if (note->type & NOTE_FLAG_MINE)
 		{
 			//Check if mine can be hit
 			fixed_t note_fp = (fixed_t)note->pos << FIXED_SHIFT;
-			if (note_fp - (stage.late_safe * 3 / 5) > stage.note_scroll)
+			if (note_fp - stage.early_safe > stage.note_scroll)
 				break;
-			if (note_fp + (stage.late_safe * 2 / 5) < stage.note_scroll)
+			if (note_fp + stage.late_safe < stage.note_scroll)
 				continue;
 			if ((note->type & NOTE_FLAG_HIT) || (note->type & (NOTE_FLAG_OPPONENT | 0x3)) != type || (note->type & NOTE_FLAG_SUSTAIN))
 				continue;
@@ -376,14 +377,30 @@ static void Stage_NoteCheck(PlayerState *this, u8 type)
 			//Hit the mine
 			note->type |= NOTE_FLAG_HIT;
 			
-			this->health -= 2000;
-			if (this->character->spec & CHAR_SPEC_MISSANIM)
-				this->character->set_anim(this->character, note_anims[type & 0x3][2]);
-			else
-				this->character->set_anim(this->character, note_anims[type & 0x3][0]);
+			this->health -= 0x7000;
+			this->character->set_anim(this->character, note_anims[type & 0x3][0]);
 			this->arrow_hitan[type & 0x3] = -1;
 			return;
 		}
+		else
+		{
+			//Check if parry can be hit
+			fixed_t note_fp = (fixed_t)note->pos << FIXED_SHIFT;
+			if (note_fp - stage.early_safe > stage.note_scroll)
+				break;
+			if (note_fp + stage.late_safe < stage.note_scroll)
+				continue;
+			if ((note->type & NOTE_FLAG_HIT) || (note->type & (NOTE_FLAG_OPPONENT | 0x3)) != type || (note->type & NOTE_FLAG_SUSTAIN))
+				continue;
+			
+			//Hit the mine
+			note->type |= NOTE_FLAG_HIT;
+			
+			this->character->set_anim(this->character, note_anims[type & 0x3][0]);
+			this->arrow_hitan[type & 0x3] = -1;
+			return;
+		}
+
 	}
 	
 	//Missed a note
@@ -909,7 +926,7 @@ static void Stage_DrawNotes(void)
 				
 				//Draw note body
 				note_src.x = 192 + ((note->type & 0x1) << 5);
-				note_src.y = (note->type & 0x2) << 4;
+				note_src.y = ((note->type & 0x2) << 4);
 				note_src.w = 32;
 				note_src.h = 32;
 				
@@ -918,28 +935,11 @@ static void Stage_DrawNotes(void)
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
 				
-				if(stage.widescreen)
-					note_dst.w = note_dst.w * 0.815;
-				
 				if (stage.downscroll)
 					note_dst.y = -note_dst.y - note_dst.h;
 				Stage_DrawTex(&stage.tex_hud0, &note_src, &note_dst, stage.bump);
-				
-				//if (stage.stage_id == StageId_Clwn_4)
-				if (false)
-				{
-					//Draw note halo
-					note_src.x = 160;
-					note_src.y = 128 + ((animf_count & 0x3) << 3);
-					note_src.w = 32;
-					note_src.h = 8;
-					
-					note_dst.y -= FIXED_DEC(6,1);
-					note_dst.h >>= 2;
-					
-					Stage_DrawTex(&stage.tex_hud0, &note_src, &note_dst, stage.bump);
-				}
-				else
+
+				if ((stage.stage_id < StageId_2_1) || (stage.stage_id == StageId_DevilGambit))
 				{
 					//Draw note fire
 					note_src.x = 192 + ((animf_count & 0x1) << 5);
@@ -957,8 +957,48 @@ static void Stage_DrawNotes(void)
 						note_dst.h = note_dst.h * 3 / 2;
 					}
 					Stage_DrawTex(&stage.tex_hud0, &note_src, &note_dst, stage.bump);
-				}
 			}
+		}
+
+			else if (note->type & NOTE_FLAG_GOOD)
+			{
+				//Don't draw if already hit
+				if (note->type & NOTE_FLAG_HIT)
+					continue;
+				
+				//Draw note body
+
+				//sans note
+				if (stage.stage_id >= StageId_2_1 && stage.stage_id <= StageId_2_1)
+				{
+				note_src.x = 192 + ((note->type & 0x1) << 5);
+				note_src.y = 64  + ((note->type & 0x2) << 4);
+				note_src.w = 32;
+				note_src.h = 32;
+				}
+
+				//cuphead note
+				else
+				{
+				note_src.x = 192 + ((note->type & 0x1) << 5);
+				note_src.y = (note->type & 0x2) << 4;
+				note_src.w = 32;
+				note_src.h = 32;
+				}
+				
+				note_dst.x = note_x[(note->type & 0x7)] - FIXED_DEC(16,1);
+				note_dst.y = y - FIXED_DEC(16,1);
+				note_dst.w = note_src.w << FIXED_SHIFT;
+				note_dst.h = note_src.h << FIXED_SHIFT;
+				
+				if(stage.widescreen)
+					note_dst.w = note_dst.w * 0.815;
+				
+				if (stage.downscroll)
+					note_dst.y = -note_dst.y - note_dst.h;
+				Stage_DrawTex(&stage.tex_hud0, &note_src, &note_dst, stage.bump);
+			}
+
 			else
 			{
 				//Don't draw if already hit

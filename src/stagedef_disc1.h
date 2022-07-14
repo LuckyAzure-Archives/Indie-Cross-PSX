@@ -56,11 +56,11 @@
 		Back_Week2_New,
 		
 		//Song info
-		{FIXED_DEC(24,10),FIXED_DEC(26,10),FIXED_DEC(28,10)},
-		1, 1,
-		"\\SONGS\\CUPHEAD1.MUS;1",
+		{FIXED_DEC(24,10),FIXED_DEC(25,10),FIXED_DEC(29,10)},
+		2, 1,
+		"\\SONGS\\SANS1.MUS;1",
 		
-		StageId_1_2, STAGE_LOAD_FLAG
+		StageId_2_1, STAGE_LOAD_FLAG
 	},
 	{ //StageId_DevilGambit (Devils-Gambit)
 		//Characters
@@ -72,7 +72,7 @@
 		Back_Week1_New,
 		
 		//Song info
-		{FIXED_DEC(13,10),FIXED_DEC(15,10),FIXED_DEC(23,10)},
+		{FIXED_DEC(29,10),FIXED_DEC(29,10),FIXED_DEC(29,10)},
 		0x80, 1,
 		"\\SONGS\\DEVIL.MUS;1",
 		

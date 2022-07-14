@@ -6,6 +6,7 @@ all: \
 	iso/songs/snake-eyes/snake-eyes.mus \
 	iso/songs/technicolor-tussle/technicolor-tussle.mus \
 	iso/songs/knockout/knockout.mus \
+	iso/songs/whoopee/whoopee.mus \
 	iso/songs/devils-gambit/devils-gambit.mus \
 
 iso/%.mus: iso/%.txt
