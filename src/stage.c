@@ -174,13 +174,6 @@ static void Stage_ScrollCamera(void)
 		stage.camera.x += FIXED_MUL(dx, stage.camera.td);
 		stage.camera.y += FIXED_MUL(dy, stage.camera.td);
 		stage.camera.zoom += FIXED_MUL(dz, stage.camera.td);
-		
-		//Shake in Week 4
-		//if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_3)
-		//{
-		//	stage.camera.x += RandomRange(FIXED_DEC(-1,10),FIXED_DEC(1,10));
-		//	stage.camera.y += RandomRange(FIXED_DEC(-25,100),FIXED_DEC(25,100));
-		//}
 	#endif
 	
 	//Update other camera stuff
